@@ -32,7 +32,7 @@ Web uygulamanızın web sunucusu `Nginx` ve veri tabanı `MySQL`den bahsetmişti
 Bu servisler sizin makinenizde gerçekten çalıştığında başka makinelerde de çalışacaktır, `Docker` güvencesi ;)
 
 # Docker
-[https://www.docker.com](Bu adresten) resmi docker dokümantasyonuna bakarak kurulum yapabilirsiniz veya aşağıdaki komutu komut satırında çalıştırarak en güvenilir kurulumu yapabilirsiniz.
+[Bu adresten](https://www.docker.com) resmi docker dokümantasyonuna bakarak kurulum yapabilirsiniz veya aşağıdaki komutu komut satırında çalıştırarak en güvenilir kurulumu yapabilirsiniz.
 ```bash
 curl https://get.docker.com | bash
 ```
