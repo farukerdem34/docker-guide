@@ -111,3 +111,5 @@ docker run -it -p 80:80 --name my-nginx -v nginx-volume:/etc/nginx --network my-
 ```
 
 oluşturduğumuz konteynerin `my-network` ağına dahil olup opsiyonel olarak belirtilen `--ip` parametresiyle manuel olarak `IP` ataması yapmamızı sağlamakta.
+
+# Docker Compose
