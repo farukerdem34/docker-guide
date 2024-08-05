@@ -6,7 +6,7 @@
 - Taşınabilir
 - Optimize Kaynak Tüketimi
 - Hızlı Çalıştırılabilir (CI/CD)
-- [İzole](#sandbox-nedir)
+- [İzole](#sandbox)
 - [Ölçeklendirilebilir](#microservis)
 ## Linux Paketleri Nasıl Çalışıyor?
 GNU/Linux Windows'a göre bağımlılıklarını (paketlerini) biraz farklı ve verimli bir yolla saklamayı tercih etmekte. Windows bu noktada depolamadan feragat ederek her uygulama kurulumunda uygulamanın tüm bağımlılıklarını kendisiyle beraber getirerek kurulumda hiç yokmuş gibi kurmasını ister.
