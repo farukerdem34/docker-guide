@@ -90,3 +90,22 @@ docker run -it -p 80:80 --name my-nginx -v nginx-volume:/etc/nginx nginx:latest
 
 `docker inspect nginx-volume` komutunu kullandığımızda `my-nginx` konteynerinin içerisindeki `/etc/nginx` yolunun dahil edildiği sanal konteyner depolama biriminin özelliklerini ve ana makinede nerede saklandığını öğrenebilirsiniz.
 
+### Docker Ağları
+
+```bash
+docker network <parametre>
+```
+komutunu kullanarak `Docker` ağı işlemlerini yapabilirsiniz.
+
+```
+docker network create --attachable --subnet 10.10.10.0/24 my-network
+```
+
+- `--attachable` konteynerleri sonradan bu ağa dahil edebilmemizi sağlamakta
+- `--subnet` ağ subnet ayarını belirlememizi sağlamakta
+
+```bash
+docker run -it -p 80:80 --name my-nginx -v nginx-volume:/etc/nginx --network my-network --ip 10.10.10.10 nginx:latest
+```
+
+oluşturduğumuz konteynerin `my-network` ağına dahil olup opsiyonel olarak belirtilen `--ip` parametresiyle manuel olarak `IP` ataması yapmamızı sağlamakta.
