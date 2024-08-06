@@ -247,3 +247,17 @@ volumes:
     app:            
 ```
 `docker compose up -d` komutunu kullandığımızda önce yansı (`image`) oluşturulacak ardından konteyner oluşturulacak ve `80` portundan erişilebilir bir web uygulamamız çalıştırılmış olacak.
+
+# Ekstra Kaynaklar
+- [Network Chuck Docker Tutorials](https://www.youtube.com/watch?v=eGz9DS-aIeY&list=PLIhvC56v63IJlnU4k60d0oFIrsbXEivQo)
+- [Dockerlabs](https://github.com/collabnix/dockerlabs)
+- [Docker Docs](https://docs.docker.com/)
+- [Docker CLI Cheats Sheets](https://docs.docker.com/get-started/docker_cheatsheet.pdf)
+- [Docker Compose Docs](https://docs.docker.com/compose/)
+- [Awesome Docker](https://github.com/veggiemonk/awesome-docker)
+
+## Docker Kullanılan Örnek Projeler
+- https://github.com/farukerdem34/homeserver
+- https://github.com/farukerdem34/Ghost-Nginx-Mysql
+- https://github.com/skylab-kulubu/Jenkins-Demo
+- https://github.com/tguard-soc-package/nusantara
