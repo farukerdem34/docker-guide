@@ -116,7 +116,7 @@ oluşturduğumuz konteynerin `my-network` ağına dahil olup opsiyonel olarak be
 
 Docker compose komut satırı üzerinden container oluşturmaktansa YAML ile önceden konfigüre edilmiş konteynerler belirleyerek belirli komutlarla konteyner veya konteynerleri çalıştırmaya yarar. GhostCMS çalıştırmak için oluşturulmuş bir [`compose.yml`](https://github.com/farukerdem34/Ghost-Nginx-Mysql/blob/master/compose.yml) dosyasını inceleyelim.
 
-``YAML
+```YAML
 version: '3.1'
 
 services:
