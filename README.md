@@ -221,6 +221,7 @@ Sırayla inceleyelim
 - `FROM python:3` ile `python` yansısının `3` etiketli versiyonunu kullanmak istediğimizi belirtiyoruz
 - `RUN apt update -y` ile konteyner içerisinde `apt update -y` komutunu çalıştırıyoruz 
 - `COPY app /app` ile mevcut dizinin içerisindeki `app` klasörünü konteyner içerisindeki `/app` klasörüne kopyalıyoruz yoksa oluşturuyoruz
+- `WORKDIR /app` ile mevcut çalışma dizinini konteyner içerisinde `/app` olarak değiştiyoruz.
 - `RUN pip install --no-cache-dir -r requirements.txt` ile `pip` paket yükleyicisini kullanarak gerekli bağımlılıkları sisteme yüklüyoruz
 - `EXPOSE 8080` ile konteynerin `8080` portunu  erişilebilir hale getiriyoruz
 - `CMD python manage.py runserver 8080` ile yansı kullanılarak konteyner oluşturulduğunda çalıştırılacak ilk komutu belirtiyoruz, burada `8080` portunda bir web uygulaması çalıştırılmakta.
