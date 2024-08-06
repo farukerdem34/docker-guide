@@ -113,3 +113,136 @@ docker run -it -p 80:80 --name my-nginx -v nginx-volume:/etc/nginx --network my-
 oluşturduğumuz konteynerin `my-network` ağına dahil olup opsiyonel olarak belirtilen `--ip` parametresiyle manuel olarak `IP` ataması yapmamızı sağlamakta.
 
 # Docker Compose
+
+Docker compose komut satırı üzerinden container oluşturmaktansa YAML ile önceden konfigüre edilmiş konteynerler belirleyerek belirli komutlarla konteyner veya konteynerleri çalıştırmaya yarar. GhostCMS çalıştırmak için oluşturulmuş bir [`compose.yml`](https://github.com/farukerdem34/Ghost-Nginx-Mysql/blob/master/compose.yml) dosyasını inceleyelim.
+
+``YAML
+version: '3.1'
+
+services:
+
+  ghost:
+    container_name: ghost
+    image: ghost:5-alpine
+    restart: always
+    #ports:
+    # - 60000:2368
+    environment:
+      # see https://ghost.org/docs/config/#configuration-options
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: root
+      database__connection__password: CHANGE_THIS
+      database__connection__database: ghost
+      # this url value is just an example, and is likely wrong for your environment!
+      url: http://your.domain
+      NODE_ENV: production
+      # contrary to the default mentioned in the linked documentation, this image defaults to NODE_ENV=production (so development mode needs to be explicitly specified if desired)
+      #NODE_ENV: development
+    volumes:
+      - ./ghost:/var/lib/ghost/content:rw
+    networks:
+      ghost:
+        ipv4_address: 10.20.0.10
+
+  db:
+    container_name: ghost_mysql
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: CHANGE_THIS
+    volumes:
+      - ./db:/var/lib/mysql:rw
+    networks:
+      ghost:
+        ipv4_address: 10.20.0.5
+
+  nginx:
+     ports: 
+      - "80:80"
+      - "443:443"
+     image: nginx:latest
+     container_name: nginx
+     networks:
+       ghost:
+     volumes:
+       - ./ghost.conf:/etc/nginx/conf.d/ghost.conf:ro
+       - ./mycert.crt:/etc/nginx/mycert.crt:ro
+       - ./mycert.key:/etc/nginx/mycert.key:ro
+
+
+
+volumes:
+  ghost:
+  db:
+
+networks:
+  ghost:
+    name: "ghost-network"
+    ipam:
+      config:
+        - subnet: 10.20.0.0/24
+```
+
+`Ghost:5-alpine` kullanan `ghost`, `MySQL` kullanan `db` ve `Nginx` kullanan bir `nginx` servisi bulunmakkta. Her bir servis ihtiyaçlarına va dokümanasyonlarında belirtilen `volume`, `port`, `environment variable` ve diğer parametrelere özelleştirilmiş.
+
+`Nginx` için gerekli konfigürasyon dosyaları belirtlilen dosya yollarıyla bağdaştırılarak konteyner içerisinde kullanılmış. `Volume`ler kullanılmak üzere önceden tanımlanmış, konteynerlerin dahil edileceği özel bir `Docker ağı` oluşturulmuş ve `subnet` değeri `10.20.0.0/24` olarak belirtilmiş.
+
+`Docker CLI` ile yapılabilecek her şey `YAML` dosyasında da yapılmış ve bunları yaparken her seferinde konteynerlere parametre yazmanıza gerek yok.
+
+`docker compose up -d` komutu ile `compose.yml` dosyası içerisinde belirtilen tüm konteynerler konfigürasyonlarına göre çalışmaya başlayacaklardır. `docker compose logs -f` komutuyla mevcut dizininizdeki `compose.yml` konfigürayonuna göre logları gösterecek, `docker compose stats` komutu ile yine aynı konteynerlerin istatistiklerini gösterecektir.
+
+`docker compose down` komutu ile konteynerleri kapatabilir, `docker compose down --rmi local -v` komutu ile hem oluşturulan `volume`leri hem oluşturulan `image`ları silerek hiçbir şey yaşanmamış gibi baştan başlayabilirsiniz.
+
+# Kendi Konteynerini Hazırla
+
+Bu işlem için `Dockerfile` isimli dosyaları kullanılarak `docker build -t <tag> /path/to/Dockerfile` komutu ile `Dockerfile` içerisindeki adımları izleyerek ihtiyaçlarına göre bir `image` oluşturabilirsin. Fakat bu komut yerine `compose.yml` kullanman `declerative` kullanımla daha güvenilir ve tekrar kullanılabilir olacaktır.
+
+## Dockerfile
+
+```Dockerfile
+FROM python:3
+
+RUN apt update -y
+
+COPY app /app
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+EXPOSE 8080
+
+CMD python manage.py runserver 8080
+```
+
+Sırayla inceleyelim
+
+- `FROM python:3` ile `python` yansısının `3` etiketli versiyonunu kullanmak istediğimizi belirtiyoruz
+- `RUN apt update -y` ile konteyner içerisinde `apt update -y` komutunu çalıştırıyoruz 
+- `COPY app /app` ile mevcut dizinin içerisindeki `app` klasörünü konteyner içerisindeki `/app` klasörüne kopyalıyoruz yoksa oluşturuyoruz
+- `RUN pip install --no-cache-dir -r requirements.txt` ile `pip` paket yükleyicisini kullanarak gerekli bağımlılıkları sisteme yüklüyoruz
+- `EXPOSE 8080` ile konteynerin `8080` portunu  erişilebilir hale getiriyoruz
+- `CMD python manage.py runserver 8080` ile yansı kullanılarak konteyner oluşturulduğunda çalıştırılacak ilk komutu belirtiyoruz, burada `8080` portunda bir web uygulaması çalıştırılmakta.
+
+şimdi ise bu `Dockerfile`ı `Docker Compose` ile kullanalım.
+
+```YAML
+services:
+    web:
+        build: .
+        ports:
+            - 80:8080
+        volumes:
+            - app:/app
+        container_name: my-web-app
+        networks:
+            web-app:
+
+networks:
+    web-app:
+
+volumes:
+    app:            
+```
+`docker compose up -d` komutunu kullandığımızda önce yansı (`image`) oluşturulacak ardından konteyner oluşturulacak ve `80` portundan erişilebilir bir web uygulamamız çalıştırılmış olacak.
